@@ -16,11 +16,14 @@ Route::group([ "middleware"=> ["auth:sanctum"]],function(){
     // Profile
 Route::get("profile",[UserController::class,"profile"]);
 
-// Deconnexion
-Route::get("logout",[UserController::class,"logout"]);
+
 
 
 });
+
+
+// routes/api.php
+
 
 Route::middleware('auth:sanctum')->group(function () {
 // Envoi de messages
@@ -38,6 +41,11 @@ Route::patch('messages/read/{id}', [MessageController::class, 'markAsRead']);
 Route::post('messages/read/{userId}', [MessageController::class, 'markMessagesAsRead']);
 
 Route::get('/users', [UserController::class, 'getUsers']);
+
+Route::get('/user', [UserController::class, 'getUserDetails']);
+
+// Deconnexion
+Route::get("logout",[UserController::class,"logout"]);
 });
 
 // Route::get('/user', function (Request $request) {

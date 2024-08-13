@@ -136,4 +136,5 @@ try {
         $users = User::all();
         return response()->json(['data' => $users]);
     }
+
 }
