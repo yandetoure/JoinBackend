@@ -192,17 +192,15 @@ class MessageController extends Controller
         'message' => "Messages marqués comme lus",
     ], 200);
 }
-public function markAsRead($id)
+public function markAsRead($messageId)
 {
-    try {
-        $message = Message::findOrFail($id);
-        $message->is_read = true; // Met à jour le champ booléen
-        $message->save();
+    $message = Message::findOrFail($messageId);
+    $message->is_read = true;
+    $message->read_at = now();  // Mettre à jour avec la date et l'heure actuelles
+    $message->save();
 
-        return response()->json(['message' => 'Message marked as read'], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Failed to mark message as read', 'details' => $e->getMessage()], 500);
-    }
+    return response()->json(['status' => 'Message marked as read']);
 }
+
 
 }

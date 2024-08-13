@@ -24,7 +24,6 @@ Route::get("profile",[UserController::class,"profile"]);
 
 // routes/api.php
 
-
 Route::middleware('auth:sanctum')->group(function () {
 // Envoi de messages
 // Route::post('/send-message', [MessageController::class, 'sendMessage']);
