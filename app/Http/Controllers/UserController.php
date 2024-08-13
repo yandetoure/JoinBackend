@@ -62,43 +62,54 @@ try {
     }
     }
 
-    public function login(Request $request){
-    try {
+/**
+     * Login a user.
+     */
+    public function login(Request $request)
+    {
+        try {
+            // Validation des données
+            $validateUser = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required|min:8',
+            ]);
 
-    // Validation des données
-    $validateUser = Validator::make($request->all(), [
-        'email' => 'required|email',
-        'password' => 'required|min:8',
-    ]);
-    // Retourner les erreurs de validation si présentes
-    if ($validateUser->fails()) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Validation error',
-            'errors' => $validateUser->errors()
-        ], 400);
-    }
-    if(Auth::attempt($request->only(['email','password']))){
-        return response()->json([
-            'status' => false,
-            'message' => "L'email ou le mot de passe ne correspond pas",
-        ], 500);
-    }
+            // Retourner les erreurs de validation si présentes
+            if ($validateUser->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validateUser->errors()
+                ], 400);
+            }
 
-    $user =User::where('email',$request->email)->first();
-    return response()->json([
-        'status' => false,
-        'message' => 'Vous êtes connecté',
-        'token' => $user->createToken("API TOKEN")
-    ], 500);
+            // Tentative de connexion
+            if (!Auth::attempt($request->only(['email', 'password']))) {
+                return response()->json([
+                    'status' => false,
+                    'message' => "L'email ou le mot de passe ne correspond pas",
+                ], 401);
+            }
 
+            // Récupération de l'utilisateur authentifié
+            $user = User::where('email', $request->email)->first();
 
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Erreur lors de la création de l\'utilisateur',
-            'error' => $e->getMessage()
-        ], 500);
+            // Création du token
+            $token = $user->createToken("API TOKEN")->plainTextToken;
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Vous êtes connecté',
+                'token' => $token,
+                'user' => $user
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erreur lors de la connexion',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -119,5 +130,10 @@ try {
            'message' => "Vous êtes déconnecté",
            'data' => [],
         ], 200);
+    }
+    public function getUsers()
+    {
+        $users = User::all();
+        return response()->json(['data' => $users]);
     }
 }
