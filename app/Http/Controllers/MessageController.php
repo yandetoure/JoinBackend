@@ -5,18 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class MessageController extends Controller
 {
    // Affiche toutes les discussions de l'utilisateur authentifié
-   public function getAllDiscussions()
+public function getAllDiscussions()
 {
     $userId = Auth::id();
+    // $otherUserId = User::id();
     
     // Récupère les discussions avec les utilisateurs avec qui des messages ont été échangés
     $discussions = Message::where('sender_id', $userId)
                       ->orWhere('receiver_id', $userId)
-                      ->with(['sender', 'receiver'])
+                      ->with(['sender', 'receiver'])  // Inclut les informations des expéditeurs et récepteurs
                       ->get()
                       ->groupBy(function($message) use ($userId) {
                           return $message->sender_id === $userId ? $message->receiver_id : $message->sender_id;
@@ -31,7 +33,7 @@ class MessageController extends Controller
 
         $result[] = [
             'user_id' => $userId,
-            'user_name' => $user->name,
+            'user_pseudo' => $user->pseudo,
             'last_message' => $lastMessage->message,
             'last_message_time' => $lastMessage->created_at->format('H:i'),
             'unread_count' => $unreadCount,
@@ -44,6 +46,7 @@ class MessageController extends Controller
         'data' => $result,
     ], 200);
 }
+
    
 
    public function sendMessage(Request $request)

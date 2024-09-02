@@ -38,6 +38,10 @@ class User extends Authenticatable
     public function Message(){
         return $this->hasMany(Message::class);
     }
+
+    public function Post(){
+        return $this->hasMany(Post::class);
+    }
     
     /**
      * Get the attributes that should be cast.

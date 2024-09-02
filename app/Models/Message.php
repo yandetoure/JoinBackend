@@ -38,7 +38,6 @@ class Message extends Model
         {
             return $this->belongsTo(User::class, 'receiver_id');
         }
-
         
         // Méthode pour récupérer les messages non lus de l'utilisateur
         // public function scopeUnreadMessages($query, $userId)
