@@ -24,6 +24,7 @@ class UserController extends Controller
             'first_name' => 'required|min:3|max:60',
             'last_name' => 'required|min:2|max:60',
             'pseudo' => 'nullable|min:3|max:20',
+            'image' => 'nullable|string',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
         ]);
@@ -43,6 +44,7 @@ class UserController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'pseudo' => $request->pseudo,
+                'image' => $request->image,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),  // Hash le mot de passe avant de le sauvegarder
             ]);
